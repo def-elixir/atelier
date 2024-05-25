@@ -11,7 +11,7 @@
 # and so on) as they will fail if something goes wrong.
 
 alias Atelier.Repo
-# alias Atelier.Archive.Text
+alias Atelier.Items.ItemType
 # alias Atelier.Archive.Directory
 
 # directories = [
