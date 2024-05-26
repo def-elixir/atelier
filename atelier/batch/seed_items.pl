@@ -16,7 +16,6 @@ $dbh->{sqlite_unicode} = 1; # UTF8
 # item_types
 my $sth = $dbh->do("DELETE FROM item_types;");
 $sth = $dbh->do("DELETE FROM sqlite_sequence where name='item_types'");
-$dbh->commit;
 
 $sth = $dbh->prepare("INSERT INTO item_types (id, name) VALUES (?, ?);");
 
@@ -30,14 +29,12 @@ foreach my $record (@data) {
   $sth->bind_param(2, $record->[1]);
   $sth->execute();
 }
-$dbh->commit;
 
 say "insert into item_types done ...";
 
 # categories
 $sth = $dbh->do("DELETE from categories;");
 $sth = $dbh->do("DELETE FROM sqlite_sequence where name='categories'");
-$dbh->commit;
 
 $sth = $dbh->prepare("INSERT INTO categories (name) VALUES (?);");
 
@@ -48,20 +45,43 @@ while ($ul_content =~ /<li><a href="#[^"]*">\((.*?)\)<\/a><\/li>/g) {
   $sth->bind_param(1, $1);
   $sth->execute();
 }
-$dbh->commit;
 
 say "insert into categories done ...";
 
-# items
+# items and items_categories
+$sth = $dbh->do("DELETE from items;");
+$sth = $dbh->do("DELETE FROM sqlite_sequence where name='items'");
+$sth = $dbh->do("DELETE from items_categories;");
+$sth = $dbh->do("DELETE FROM sqlite_sequence where name='items_categories'");
+
+$sth = $dbh->prepare("INSERT INTO items (name, item_type_id) VALUES (?, ?);");
+
 my $material_item_list_page = `wget -q -O - https://wikiwiki.jp/meruruplus/%E7%B4%A0%E6%9D%90%E3%82%A2%E3%82%A4%E3%83%86%E3%83%A0`;
 my $tbody = decode('UTF-8', $material_item_list_page) =~ /<tbody>(.*?)<\/tbody>/g;
 my $tbody_content = $1;
 while ($tbody_content =~ /<tr>(.*?)<\/tr>/g) {
+  # insert into items
   my ($item_name, $categories) = ($1 =~ /<td [^>]*>(.*?)<\/td><td [^>]*>(.*?)<\/td>/);
-  say $item_name;
+  $sth->bind_param(1, $item_name);
+  $sth->bind_param(2, 1);
+  $sth->execute();
+  my $item_id = $dbh->sqlite_last_insert_rowid();
   while ($categories =~ /\((.*?)\)/g) {
-    say $1;
+    # get category_id by name
+    my $sth = $dbh->prepare("SELECT id FROM categories WHERE name = ?");
+    $sth->bind_param(1, $1);
+    $sth->execute();
+    my $row = $sth->fetch;
+    my $category_id = $row->[0];
+    # insert into items_categories
+    $sth = $dbh->prepare("INSERT INTO items_categories (item_id, category_id) VALUES (?, ?);");
+    $sth->bind_param(1, $item_id);
+    $sth->bind_param(2, $category_id);
+    $sth->execute();
   }
 }
 
+say "insert into items and items_categories done ...";
+
+$dbh->commit;
 $dbh->disconnect;
