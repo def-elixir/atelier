@@ -2,7 +2,6 @@
 use v5.36;
 use utf8;
 use Encode 'decode';
-use DBI;
 use DBI qw(:sql_types);
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
@@ -57,7 +56,7 @@ $sth = $dbh->do("DELETE FROM sqlite_sequence where name='items_categories'");
 $sth = $dbh->prepare("INSERT INTO items (name, item_type_id) VALUES (?, ?);");
 
 my $material_item_list_page = `wget -q -O - https://wikiwiki.jp/meruruplus/%E7%B4%A0%E6%9D%90%E3%82%A2%E3%82%A4%E3%83%86%E3%83%A0`;
-my $tbody = decode('UTF-8', $material_item_list_page) =~ /<tbody>(.*?)<\/tbody>/g;
+my $tbody = decode('UTF-8', $material_item_list_page) =~ /<tbody>(.*?)<\/tbody>/;
 my $tbody_content = $1;
 while ($tbody_content =~ /<tr>(.*?)<\/tr>/g) {
   # insert into items
