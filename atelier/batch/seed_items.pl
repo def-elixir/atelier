@@ -7,6 +7,7 @@ use DBI qw(:sql_types);
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
 
+# setting sqlite
 my $dbh = DBI->connect("dbi:SQLite:dbname=../data/atelier_repo.db");
 $dbh->{RaiseError} = 1; 
 $dbh->{AutoCommit} = 0; # Transaction
@@ -50,5 +51,17 @@ while ($ul_content =~ /<li><a href="#[^"]*">\((.*?)\)<\/a><\/li>/g) {
 $dbh->commit;
 
 say "insert into categories done ...";
+
+# items
+my $material_item_list_page = `wget -q -O - https://wikiwiki.jp/meruruplus/%E7%B4%A0%E6%9D%90%E3%82%A2%E3%82%A4%E3%83%86%E3%83%A0`;
+my $tbody = decode('UTF-8', $material_item_list_page) =~ /<tbody>(.*?)<\/tbody>/g;
+my $tbody_content = $1;
+while ($tbody_content =~ /<tr>(.*?)<\/tr>/g) {
+  my ($item_name, $categories) = ($1 =~ /<td [^>]*>(.*?)<\/td><td [^>]*>(.*?)<\/td>/);
+  say $item_name;
+  while ($categories =~ /\((.*?)\)/g) {
+    say $1;
+  }
+}
 
 $dbh->disconnect;
