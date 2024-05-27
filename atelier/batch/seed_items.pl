@@ -32,7 +32,7 @@ foreach my $record (@data) {
 say "insert into item_types done ...";
 
 # categories
-$sth = $dbh->do("DELETE from categories;");
+$sth = $dbh->do("DELETE FROM categories;");
 $sth = $dbh->do("DELETE FROM sqlite_sequence where name='categories'");
 
 $sth = $dbh->prepare("INSERT INTO categories (name) VALUES (?);");
@@ -48,9 +48,9 @@ while ($ul_content =~ /<li><a href="#[^"]*">\((.*?)\)<\/a><\/li>/g) {
 say "insert into categories done ...";
 
 # items and items_categories
-$sth = $dbh->do("DELETE from items;");
+$sth = $dbh->do("DELETE FROM items;");
 $sth = $dbh->do("DELETE FROM sqlite_sequence where name='items'");
-$sth = $dbh->do("DELETE from items_categories;");
+$sth = $dbh->do("DELETE FROM items_categories;");
 $sth = $dbh->do("DELETE FROM sqlite_sequence where name='items_categories'");
 
 $sth = $dbh->prepare("INSERT INTO items (name, item_type_id) VALUES (?, ?);");
