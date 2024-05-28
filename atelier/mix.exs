@@ -28,6 +28,7 @@ defmodule Atelier.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.11"},
       {:ecto_sqlite3, "~> 0.15.1"},
+      {:jason, "~> 1.4.1"},
     ]
   end
 
