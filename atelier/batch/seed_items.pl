@@ -6,6 +6,9 @@ use DBI qw(:sql_types);
 binmode STDOUT, ":utf8";
 binmode STDERR, ":utf8";
 
+# Install DBD::SQLite before execute this script.
+# cpan install DBD::SQLite
+
 # setting sqlite
 my $dbh = DBI->connect("dbi:SQLite:dbname=../data/atelier_repo.db");
 $dbh->{RaiseError} = 1; 

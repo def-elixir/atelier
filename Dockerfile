@@ -1,4 +1,4 @@
-FROM elixir:1.16.2
+FROM elixir:1.17.0
 
 ENV TZ Asia/Tokyo
 
