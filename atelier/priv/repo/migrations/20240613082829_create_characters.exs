@@ -5,7 +5,7 @@ defmodule Atelier.Repo.Migrations.CreateCharacters do
     create table(:characters) do
       add :name, :string, null: false
       add :cv, :string, null: false
-      add :age, :integer, null: false
+      add :age, :integer, null: true, default: nil
       add :height, :integer, null: false
       add :blood_type, :string, null: false
       add :description, :string, null: false
