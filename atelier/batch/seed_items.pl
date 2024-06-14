@@ -41,7 +41,7 @@ $sth = $dbh->do("DELETE FROM sqlite_sequence where name='categories'");
 $sth = $dbh->prepare("INSERT INTO categories (name) VALUES (?);");
 
 my $category_list_page = `wget -q -O - https://wikiwiki.jp/meruruplus/%E8%AA%BF%E5%90%88%E9%80%86%E5%BC%95%E3%81%8D`;
-my $ul = decode('UTF-8', $category_list_page) =~ /<ul class="list1">(.*?)<\/ul>/s;
+decode('UTF-8', $category_list_page) =~ /<ul class="list1">(.*?)<\/ul>/s;
 my $ul_content = $1;
 while ($ul_content =~ /<li><a .*?>\((.*?)\)<\/a><\/li>/g) {
   $sth->bind_param(1, $1);
@@ -59,9 +59,9 @@ $sth = $dbh->do("DELETE FROM sqlite_sequence where name='items_categories'");
 $sth = $dbh->prepare("INSERT INTO items (name, item_type_id) VALUES (?, ?);");
 
 my $material_item_list_page = `wget -q -O - https://wikiwiki.jp/meruruplus/%E7%B4%A0%E6%9D%90%E3%82%A2%E3%82%A4%E3%83%86%E3%83%A0`;
-my $tbody = decode('UTF-8', $material_item_list_page) =~ /<tbody>(.*?)<\/tbody>/;
-my $tbody_content = $1;
-while ($tbody_content =~ /<tr>(.*?)<\/tr>/g) {
+decode('UTF-8', $material_item_list_page) =~ /<table><thead>.*?<\/thead><tbody>(.*?)<\/tbody><\/table>/;
+my $table_content = $1;
+while ($table_content =~ /<tr>(.*?)<\/tr>/g) {
   # insert into items
   my ($item_name, $categories) = ($1 =~ /<td .*?>(.*?)<\/td><td .*?>(.*?)<\/td>/);
   $sth->bind_param(1, $item_name);
@@ -92,7 +92,7 @@ $sth = $dbh->do("DELETE FROM sqlite_sequence where name='characters'");
 $sth = $dbh->prepare("INSERT INTO characters (name, cv, age, height, blood_type, description) VALUES (?, ?, ?, ?, ?, ?);");
 
 my $characters_list_page = `wget -q -O - https://wikiwiki.jp/meruruplus/%E3%82%AD%E3%83%A3%E3%83%A9%E3%82%AF%E3%82%BF%E3%83%BC`;
-my $table_content = decode('UTF-8', $characters_list_page) =~ /<table><tbody>(.*?)<\/tbody><\/table>/;
+decode('UTF-8', $characters_list_page) =~ /<table><tbody>(.*?)<\/tbody><\/table>/;
 $table_content = $1;
 while ($table_content =~ /<tr>(.*?)<\/tr><tr>(.*?)<\/tr><tr>(.*?)<\/tr>/g) {
   # each captured <tr>
@@ -109,6 +109,8 @@ while ($table_content =~ /<tr>(.*?)<\/tr><tr>(.*?)<\/tr><tr>(.*?)<\/tr>/g) {
   my @params = ($name, $cv, (defined $age ? $age : undef), $height, $blood_type, $description);
   $sth->execute(@params);
 }
+
+say "insert into characterss done ...";
 
 $dbh->commit;
 $dbh->disconnect;
