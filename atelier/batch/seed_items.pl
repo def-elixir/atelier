@@ -99,6 +99,8 @@ while ($table_content =~ /<tr>(.*?)<\/tr><tr>(.*?)<\/tr><tr>(.*?)<\/tr>/g) {
   my ($first_tr, $second_tr, $third_tr) = ($1, $2, $3);
   # first <tr>;
   my ($image, $name, $cv) = ($first_tr =~ /<td .*?><img src="(.*?)" .*?><\/td><td .*?>(.*?)<\/td><td .*?>CV:(.*?)<\/td>/);
+  # sanitize
+  $cv = ($cv =~ s/<.*?>\s+/\//r);
   # second <tr>
   my ($age) = ($second_tr =~ /Age:\s?(\d+)/);
   my ($height) = ($second_tr =~ /Height:(\d+)cm/);
