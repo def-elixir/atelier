@@ -100,7 +100,7 @@ while ($table_content =~ /<tr>(.*?)<\/tr><tr>(.*?)<\/tr><tr>(.*?)<\/tr>/g) {
   # first <tr>;
   my ($image, $name, $cv) = ($first_tr =~ /<td .*?><img src="(.*?)" .*?><\/td><td .*?>(.*?)<\/td><td .*?>CV:(.*?)<\/td>/);
   # sanitize
-  $cv = ($cv =~ s/<.*?>\s+/\//r);
+  $cv =~ s/<.*?>\s+/\//;
   # second <tr>
   my ($age) = ($second_tr =~ /Age:\s?(\d+)/);
   my ($height) = ($second_tr =~ /Height:(\d+)cm/);
